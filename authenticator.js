@@ -7,7 +7,9 @@ module.exports = {
         const browser = await puppeteer.launch({
             timeout: 120000,
             slowMo: 500,
-            headless: true
+            headless: true,
+            // executablePath: '/usr/bin/chromium-browser',
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
         });
         try {
             const page = await browser.newPage();

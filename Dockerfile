@@ -1,4 +1,6 @@
-FROM node:10-alpine
+FROM buildkite/puppeteer:latest
 COPY . .
+# ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
 RUN npm install
-RUN node app.js
+ENV PATH="${PATH}:/node_modules/.bin"
+CMD ["node", "app.js"]
