@@ -5,14 +5,22 @@ const requestData = require('./requestData.json');
 const searchDates = require('./searchDates.json');
 const authenticator = require('./authenticator');
 
+dotenv.config();
+
 async function start() {
-    dotenv.config();
-    const { cookies, verificationToken } = await authenticator.authenticate();
+    const { cookies, verificationToken } = await authenticator.authenticate().catch(err => {
+        if (err.message !== 'SEARCH_APPOINTMENT_NOT_LOADED') {
+            console.log(err);
+        }
+
+        return process.exit(1);
+    });
     
     const appointmentsPromises = searchDates.map(dateStr => 
-        lookForDate(cookies, verificationToken, dateStr).then(response => response.data));
+        lookForDate(cookies, verificationToken, dateStr).then(response => response.data)
+    );
 
-    const appointments = await Promise.all(appointmentsPromises).reduce(
+    const appointments = (await Promise.all(appointmentsPromises)).reduce(
         (appointments, appointment) => appointments.concat(appointment), 
     []);
 
@@ -24,8 +32,12 @@ async function start() {
     );
     
     const appointmentDates = filteredAppointments.map(appointment => appointment.Date);
-    const uniqueAppointments = new Set(appointmentDates);
-    return sendAppointmentDates(uniqueAppointments);
+    if (appointmentDates.length > 0) {
+        const uniqueAppointments = new Set(appointmentDates);
+        return sendAppointmentDates(uniqueAppointments);
+    } else {
+        return;
+    }
 }
 
 /**
@@ -86,9 +98,4 @@ async function sendAppointmentDates(appointmentsSet) {
     return response;
 }
 
-// start();
-
-module.exports = async (req, res) => {
-    await start();
-    res.send("Check finished");
-}
+start();

@@ -1,13 +1,13 @@
-const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
 const axios = require('axios');
+const puppeteer = require('puppeteer');
 
 module.exports = {
     async authenticate() {
         const browser = await puppeteer.launch({
-            headless: false,
             timeout: 120000,
-            slowMo: 500
+            slowMo: 500,
+            headless: true
         });
         try {
             const page = await browser.newPage();
@@ -15,8 +15,15 @@ module.exports = {
     
             await page.waitFor('#SelectedServiceId');
             await selectRoadTest(page);
-    
-            await page.waitFor('#search-appointment-form');
+            
+            try {
+                await page.waitFor('#search-appointment-form');
+            } catch (err) {
+                const content = await page.content();
+                console.log('Couldn\'t load search appointment form. The content is: ');
+                console.log(content);
+                throw new Error("SEARCH_APPOINTMENT_NOT_LOADED");
+            }
             const verificationToken = await getRequestVerificationToken(page);
             console.log('Verification token:');
             console.log(verificationToken);
