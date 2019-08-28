@@ -46,7 +46,7 @@ async function start() {
 async function lookForDate(cookies, verificationToken, dateStr) {
     const auxRequestData = JSON.parse(JSON.stringify(requestData)); 
     auxRequestData["__RequestVerificationToken"] = verificationToken;
-    auxRequestData.AppointmentDate = `${dateStr}T05:00:00.000Z`;
+    auxRequestData.AppointmentDate = `${dateStr}T06:00:00.000Z`;
 
     const cookiesArray = cookies.reduce((cookiesArray, cookie) => {
         cookiesArray.push(`${cookie.name}=${cookie.value}`);
@@ -64,12 +64,19 @@ async function lookForDate(cookies, verificationToken, dateStr) {
             "Origin": process.env.ORIGIN_URL,
             "Accept-Encoding": "gzip, deflate, br",
             "Accept-Language": "en,de;q=0.9",
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "Content-Length": "1401",
+            "Sec-Fetch-Mode": "cors",
+            "Sec-Fetch-Site": "same-origin",
+            "Pragma": "no-cache",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36",
             "Content-Type": "application/x-www-form-urlencoded",
             "Accept": "application/json, text/javascript, */*; q=0.01",
             "Referer": process.env.REFERER_URL,
             "X-Requested-With": "XMLHttpRequest",
-            "Connection": "keep-alive"
+            "Connection": "keep-alive",
+            "Host": "onlineservices.mpi.mb.ca"
         },
         data: encodedRequestData,
         withCredentials: true

@@ -6,7 +6,7 @@ module.exports = {
     async authenticate() {
         const browser = await puppeteer.launch({
             timeout: 120000,
-            slowMo: 500,
+            slowMo: 200,
             headless: true,
             // executablePath: '/usr/bin/chromium-browser',
             args: ['--no-sandbox', '--disable-setuid-sandbox']
@@ -15,8 +15,10 @@ module.exports = {
             const page = await browser.newPage();
             await inputPersonalData(page);
     
-            await page.waitFor('#SelectedServiceId');
-            await selectRoadTest(page);
+            await page.waitFor('#select-service-container');
+            await page.click('.service-info-container.ServiceClass .details');
+            await page.waitFor('#schedule-service-container');
+            await page.click('#nextBtn');
             
             try {
                 await page.waitFor('#search-appointment-form');
